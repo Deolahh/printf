@@ -1,4 +1,6 @@
 #include <stdarg.h>
+#include <stdio.h>
+#include "main.h"
 
 int _printf(const char *format, ...)
 {
@@ -31,6 +33,7 @@ int _printf(const char *format, ...)
 					}
 				}
 				i++;
+			}
 				else
 				{
 					putchar(format[i]);
