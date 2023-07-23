@@ -1,7 +1,12 @@
 #include <stdarg.h>
 #include <stdio.h>
 #include "main.h"
-
+/**
+ * _printf - produce outputs according to format
+ * @format: type of the string
+ * Return: number of characters printed (excluding the null byte)
+ * Write output to standard output
+ */
 int _printf(const char *format, ...)
 {
 	va_list args;
