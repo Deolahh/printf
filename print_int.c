@@ -7,7 +7,7 @@
  * Return: count
  */
 
-int print_con_spec(const char *format, ...)
+int _printf(const char *format, ...)
 {
 	va_list args;
 	int count = 0;
