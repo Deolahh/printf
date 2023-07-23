@@ -1,5 +1,3 @@
-#include <stdarg.h>
-#include <stdio.h>
 #include "main.h"
 /**
  * _printf - produce outputs according to format
@@ -7,6 +5,7 @@
  * Return: number of characters printed (excluding the null byte)
  * Write output to standard output
  */
+
 int _printf(const char *format, ...)
 {
 	va_list args;
@@ -14,36 +13,39 @@ int _printf(const char *format, ...)
 	int i = 0;
 
 	va_start(args, format);
-	while (format && format[i] != '\0')
+	while (format && format[i])
 	{
 		if (format[i] == '%')
 		{
-			if (format[i + 1] == 'c')
+			i++;
+			switch (format[i])
 			{
-				putchar(va_arg(args, int)), count++, i++;
-			}
-			else if (format[i + 1] == 's')
-			{
-				char *str = va_arg(args, char*);
-
-				if (str)
-				{
-					while (*str)
+				case 'c':
 					{
-						putchar(*str), count++, str++;
+						char c = va_arg(args, int);
+						write(1, &c, 1), count++, break;
 					}
-				} i++;
+				case 's':
+					{
+						char *str = va_arg(args, char*);
+						int len = 0;
+				
+						while (str[len])
+							len++, write(1, str, len), count += len, break;
+					}
+				case '%':
+					{
+						write(1, "%", 1), count++, break;
+					}
+				default:
+					break;
 			}
-				else
-				{
-					putchar(format[i]), count++;
-				}
-			}
-			else
-			{
-				putchar(format[i]), count++;
-			} i++;
 		}
+		else
+		{
+			write(1, &format[i], 1), count++;
+		} i++;
+	}
 	va_end(args);
-	return (count);
+	return count;
 }
