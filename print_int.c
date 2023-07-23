@@ -26,10 +26,10 @@ int print_int(const char *format, ...)
 				count++;
 				i++;
 			}
-			else
+			else if (format[i + 1] == 'r')
 			{
-				putchar(format[i]);
-				putchar(format[i + 1]);
+				putchar('%');
+				putchar('r');
 				count += 2;
 				i++;
 			}
