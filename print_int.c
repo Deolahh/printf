@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdarg.h>
 /**
- * print_con_spec - handles %d and %i conversion
+ * print_int - handles %d and %i conversion
  * @format: pointer to char d and i
  * Return: count
  */
@@ -22,21 +22,21 @@ int print_int(const char *format, ...)
 			{
 				int num = va_arg(args, int);
 
-				putchar(num + '0');
+				_putchar(num + '0');
 				count++;
 				i++;
 			}
 			else if (format[i + 1] == 'r')
 			{
-				putchar('%');
-				putchar('r');
+				_putchar('%');
+				_putchar('r');
 				count += 2;
 				i++;
 			}
 		}
 		else
 		{
-			putchar(format[i]);
+			_putchar(format[i]);
 			count++;
 		}
 		i++;
