@@ -9,46 +9,36 @@ int _printf(const char *format, ...)
 	int i = 0;
 
 	va_start(args, format);
-
 	while (format && format[i])
 	{
 		if (format[i] == '%')
 		{
 			if (format[i + 1] == 'c')
 			{
-				putchar(va_arg(args, int));
-				count++;
-				i++;
+				putchar(va_arg(args, int)), count++, i++;
 			}
 			else if (format[i + 1] == 's')
 			{
 				char *str = va_arg(args, char*);
+
 				if (str)
 				{
 					while (*str)
 					{
-						putchar(*str);
-						count++;
-						str++;
+						putchar(*str), count++, str++;
 					}
-				}
-				i++;
+				} i++;
 			}
 				else
 				{
-					putchar(format[i]);
-					count++;
+					putchar(format[i]), count++;
 				}
 			}
 			else
 			{
-				putchar(format[i]);
-				count++;
-			}
-			i++;
+				putchar(format[i]), count++;
+			} i++;
 		}
-
-		va_end(args);
-		return count;
+	va_end(args);
+	return (count);
 }
-
