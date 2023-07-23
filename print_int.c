@@ -7,7 +7,7 @@
  * Return: count
  */
 
-int _printf(const char *format, ...)
+int print_int(const char *format, ...)
 {
 	va_list args;
 	int count = 0;
@@ -24,6 +24,13 @@ int _printf(const char *format, ...)
 
 				putchar(num + '0');
 				count++;
+				i++;
+			}
+			else
+			{
+				putchar(format[i]);
+				putchar(format[i + 1]);
+				count += 2;
 				i++;
 			}
 		}
