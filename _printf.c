@@ -1,59 +1,49 @@
-#include "main.h"
 #include <stdarg.h>
-#include <unistd.h>
+#include <stdio.h>
 
-/**
- * _putchar - Custom putchar function to write a single character to stdout.
- * @c: The character to be written.
- * Return: On success, 1 is returned. On error, -1 is returned.
- */
-int _putchar(char c)
-{
-	return (write(1, &c, 1));
-}
-/**
- * _printf - produce outputs according to format
- * @format: type of the string
- * Return: number of characters printed (excluding the null byte)
- * Write output to standard output
- */
-int _printf(const char *format, ...)
-{
+int _printf(const char *format, ...) {
 	va_list args;
-	int count = 0;
-	int i = 0;
 
 	va_start(args, format);
-	while (format && format[i] != '\0')
+	int chars_written = 0;
+	
+	while (*format)
 	{
-		if (format[i] == '%')
+		if (*format == '%')
 		{
-			if (format[i + 1] == 'c')
+			format++;
+			char specifier = *format;
+			switch (specifier)
 			{
-				_putchar(va_arg(args, int)), count++, i++;
-			}
-			else if (format[i + 1] == 's')
-			{
-				char *str = va_arg(args, char*);
+				case 'c':
+					chars_written += _putchar('
+					break;
+				case 's':
+					chars_written += printf("%s", va_arg(args, char *));
+					break;
+				case 'd':
+				case 'i':
+                    chars_written += printf("%d", va_arg(args, int));
+                    break;
+                case 'u':
+                    chars_written += printf("%u", va_arg(args, unsigned int));
+                    break;
+                case 'x':
+                    chars_written += printf("%x", va_arg(args, unsigned int));
+                    break;
+                case '%':
+                    chars_written += putchar('%');
+                    break;
+                default:
+                    chars_written += putchar('%');
+                    chars_written += putchar(specifier);
+            }
+        } else {
+            chars_written += putchar(*format);
+        }
+        format++;
+    }
 
-				if (str)
-				{
-					while (*str)
-					{
-						_putchar(*str), count++, str++;
-					}
-				} i++;
-			}
-				else
-				{
-					_putchar(format[i]), count++;
-				}
-			}
-			else
-			{
-				_putchar(format[i]), count++;
-			} i++;
-		}
-	va_end(args);
-	return (count);
+    va_end(args);
+    return chars_written;
 }

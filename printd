@@ -1,0 +1,136 @@
+#include "main.h"
+int _printf(const char *format, ...) {
+    va_list args;
+    va_start(args, format);
+    int chars_written = 0;
+
+    while (*format) {
+        if (*format == '%') {
+            format++; // Move past the '%'
+            bool is_long = false;
+            bool is_uppercase = false;
+            int width = 0;
+            int precision = -1;
+            char pad_char = ' '; // Default padding character is space
+
+            if (*format == '-') {
+                // Left-align the output
+                pad_char = '-';
+                format++;
+            }
+
+            if (*format == '0') {
+                // Zero-pad the output
+                pad_char = '0';
+                format++;
+            }
+
+            // Parse width
+            while (*format >= '0' && *format <= '9') {
+                width = width * 10 + (*format - '0');
+                format++;
+            }
+
+            if (*format == '.') {
+                format++; // Move past the '.'
+                // Parse precision
+                precision = 0;
+                while (*format >= '0' && *format <= '9') {
+                    precision = precision * 10 + (*format - '0');
+                    format++;
+                }
+            }
+
+            if (*format == 'l') {
+                is_long = true;
+                format++; // Move past the 'l'
+            }
+
+            if (*format == 'X') {
+                is_uppercase = true;
+                format++; // Move past the 'X'
+            }
+
+            switch (*format) {
+                case 'c': {
+                    char c = va_arg(args, int);
+                    _putchar_char(c);
+                    chars_written++;
+                    break;
+                }
+                case 's': {
+                    const char *str = va_arg(args, const char *);
+                    print_string(str, width, pad_char);
+                    chars_written += strlen(str);
+                    break;
+                }
+                case 'd':
+                case 'i': {
+                    int num = is_long ? va_arg(args, long) : va_arg(args, int);
+                    print_int_with_padding(num, width, pad_char);
+                    chars_written += (is_long ? sizeof(long) : sizeof(int));
+                    break;
+                }
+                case 'u': {
+                    unsigned int num = is_long ? va_arg(args, unsigned long) : va_arg(args, unsigned int);
+                    _putchar_uint(num);
+                    chars_written += (is_long ? sizeof(unsigned long) : sizeof(unsigned int));
+                    break;
+                }
+                case 'x': {
+                    unsigned int num = is_long ? va_arg(args, unsigned long) : va_arg(args, unsigned int);
+                    _putchar_hex(num, is_uppercase);
+                    chars_written += (is_long ? sizeof(unsigned long) : sizeof(unsigned int));
+                    break;
+                }
+                case 'f': {
+                    double num = va_arg(args, double);
+                    _putchar_float(num, precision);
+                    chars_written += 10; // Assume a floating-point number has at most 10 characters
+                    break;
+                }
+                case '%': {
+                    _putchar_char('%');
+                    chars_written++;
+                    break;
+                }
+                case 'n': {
+                    // Write the number of characters printed so far to the given pointer argument
+                    int *ptr = va_arg(args, int *);
+                    *ptr = chars_written;
+                    break;
+                }
+                default:
+                    _putchar_escape(*format);
+                    chars_written++;
+                    break;
+            }
+        } else if (*format == '\\') {
+            // Handle escape sequences
+            format++;
+            switch (*format) {
+                case 'n': {
+                    _putchar_char('\n');
+                    chars_written++;
+                    break;
+                }
+                case 't': {
+                    _putchar_char('\t');
+                    chars_written++;
+                    break;
+                }
+                default:
+                    _putchar_char(*format);
+                    chars_written++;
+                    break;
+            }
+        } else {
+            _putchar_char(*format);
+            chars_written++;
+        }
+        format++;
+    }
+
+    va_end(args);
+    return chars_written;
+}
