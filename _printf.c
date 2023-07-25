@@ -1,179 +1,67 @@
 #include "main.h"
-int _printf(const char *format, ...) {
-    va_list args;
-    bool is_long;
-    bool is_uppercase;
-    int width, precision, pad_char, chars_written;
 
-    va_start(args, format);
-    chars_written = 0;
+void print_buffer(char buffer[], int *buff_ind);
 
-    while (*format) {
-        if (*format == '%') {
-            format++;
-            is_long = false;
-            is_uppercase = false;
-            width = 0;
-            precision = -1;
-            pad_char = ' ';
-            if (*format == '-') {
-                
-                pad_char = '-';
-                format++;
-            }
+/**
+ * _printf - produces output according to a format
+ * @format: The format string containing the text and format specifiers
+ * Return: number of characters printed (excluding null byte)
+ * Team project done by Habeeb and Adeola
+ */
 
-            if (*format == '0') {
-                
-                pad_char = '0';
-                format++;
-            }
+int _printf(const char *format, ...)
+{
+	int i, printed = 0, printed_chars = 0;
+	int flags, width, precision, size, buff_ind = 0;
+	va_list lists;
+	char buffer[BUFF_SIZE];
 
-            
-            while (*format >= '0' && *format <= '9') {
-                width = width * 10 + (*format - '0');
-                format++;
-            }
+	if (format == NULL)
+		return (-1);
 
-            if (*format == '.') {
-                format++; 
-                
-                precision = 0;
-                while (*format >= '0' && *format <= '9') {
-                    precision = precision * 10 + (*format - '0');
-                    format++;
-                }
-            }
+	va_start(lists, format);
 
-            if (*format == 'l') {
-                is_long = true;
-                format++;
-            }
+	for (i = 0; format && format[i] != '\0'; i++)
+	{
+		if (format[i] != '%')
+		{
+			buffer[buff_ind++] = format[i];
+			if (buff_ind == BUFF_SIZE)
+				print_buffer(buffer, &buff_ind);
+			printed_chars++;
+		}
+		else
+		{
+			print_buffer(buffer, &buff_ind);
+			flags = get_flags(format, &i);
+			width = get_width(format, &i, lists);
+			precision = get_precision(format, &i, lists);
+			size = get_size(format, &i);
+			++i;
+			printed = handle_print(format, &i, lists, buffer,
+				flags, width, precision, size);
+			if (printed == -1)
+				return (-1);
+			printed_chars += printed;
+		}
+	}
 
-            if (*format == 'X') {
-                is_uppercase = true;
-                format++;
-            }
+	print_buffer(buffer, &buff_ind);
 
-            switch (*format) {
-                case 'c': {
-                    char c = va_arg(args, int);
-                    _putchar_char(c);
-                    chars_written++;
-                    break;
-                }
-                case 's': {
-                    const char *str = va_arg(args, const char *);
-                    int str_len = strlen(str);
-                    int padding = (width > str_len) ? (width - str_len) : 0;
+	va_end(lists);
 
-                    if (padding > 0 && pad_char == ' ') {
-			    int i;
-                        for (i = 0; i < padding; i++) {
-                            _putchar_char(pad_char);
-                        }
-                    }
-
-                    _putchar_str(str);
-
-                    if (padding > 0 && pad_char == '-') {
-			    int i;
-                        for (i = 0; i < padding; i++) {
-                            _putchar_char(pad_char);
-                        }
-                    }
-
-                    chars_written += str_len;
-                    break;
-                }
-                case 'd':
-                case 'i': {
-                    int num = is_long ? va_arg(args, long) : va_arg(args, int);
-                    char buffer[20];
-		    int num_len, padding, i;
-                    snprintf(buffer, sizeof(buffer), "%d", num);
-                    num_len = strlen(buffer);
-
-                    padding = (width > num_len) ? (width - num_len) : 0;
-
-                    if (padding > 0 && pad_char == ' ') {
-                        for (i = 0; i < padding; i++) {
-                            _putchar_char(pad_char);
-                        }
-                    }
-
-                    _putchar_int(num);
-
-                    if (padding > 0 && pad_char == '-') {
-			    int i;
-                        for (i = 0; i < padding; i++) {
-                            _putchar_char(pad_char);
-                        }
-                    }
-
-                    chars_written += num_len;
-                    break;
-                }
-                case 'u': {
-                    unsigned int num = is_long ? va_arg(args, unsigned long) : va_arg(args, unsigned int);
-                    _putchar_uint(num);
-                    chars_written += (is_long ? sizeof(unsigned long) : sizeof(unsigned int));
-                    break;
-                }
-                case 'x': {
-                    unsigned int num = is_long ? va_arg(args, unsigned long) : va_arg(args, unsigned int);
-                    _putchar_hex(num, is_uppercase);
-                    chars_written += (is_long ? sizeof(unsigned long) : sizeof(unsigned int));
-                    break;
-                }
-                case 'f': {
-                    double num = va_arg(args, double);
-                    _putchar_float(num, precision);
-                    chars_written += 10; 
-                    break;
-                }
-                case '%': {
-                    _putchar_char('%');
-                    chars_written++;
-                    break;
-                }
-                case 'n': {
-                   
-                    int *ptr = va_arg(args, int *);
-                    *ptr = chars_written;
-                    break;
-                }
-                default:
-                    _putchar_escape(*format);
-                    chars_written++;
-                    break;
-            }
-        } else if (*format == '\\') {
-            
-            format++;
-            switch (*format) {
-                case 'n': {
-                    _putchar_char('\n');
-                    chars_written++;
-                    break;
-                }
-                case 't': {
-                    _putchar_char('\t');
-                    chars_written++;
-                    break;
-                }
-                default:
-                    _putchar_char(*format);
-                    chars_written++;
-                    break;
-            }
-        } else {
-            _putchar_char(*format);
-            chars_written++;
-        }
-        format++;
-    }
-
-    va_end(args);
-    return chars_written;
+	return (printed_chars);
 }
 
+/**
+ * print_buffer - output the content of the buffer
+ * @buffer: Array of chars in the buffer
+ * @buff_ind: buffer index
+ */
+void print_buffer(char buffer[], int *buff_ind)
+{
+	if (*buff_ind > 0)
+		write(1, &buffer[0], *buff_ind);
+
+	*buff_ind = 0;
+}
