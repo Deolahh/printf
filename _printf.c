@@ -32,6 +32,10 @@ int _printf(const char *format, ...)
 					handle_int(va_arg(args, int));
 					count++;
 					break;
+				case 'b':
+					handle_binary(va_arg(args, unsigned int));
+					count++;
+					break;
 				default:
 					write(1, format, 1);
 					count++;
