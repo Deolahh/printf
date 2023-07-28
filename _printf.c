@@ -1,8 +1,13 @@
 #include <stdarg.h>
 #include <unistd.h>
 #include "main.h"
-
-int _printf(const char *format, ...) {
+/**
+ * _printf - produces output according to a format
+ * @format: character string, composed of zero or;more directives
+ * Return: no of char printed (excluding the null byte)
+ */
+int _printf(const char *format, ...)
+{
 	va_list args;
 	int count = 0;
 
@@ -22,6 +27,11 @@ int _printf(const char *format, ...) {
 					handle_string(va_arg(args, char*));
 					count++;
 					break;
+				case 'd':
+				case 'i':
+					handle_int(va_arg(args, int));
+					count++;
+					break;
 				default:
 					write(1, format, 1);
 					count++;
@@ -35,5 +45,5 @@ int _printf(const char *format, ...) {
 		format++;
 	}
 	va_end(args);
-	return count;
+	return (count);
 }
