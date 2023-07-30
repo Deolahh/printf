@@ -1,16 +1,17 @@
 #include "main.h"
 #include <unistd.h>
+#include <stdlib.h>
 /**
  * handle_binary - prints binary
  * @num: number to be printed in binary
  * Return: None
  */
-static void handle_binary(unsigned int num)
+void handle_binary(unsigned int num)
 {
-	int size, *binary;
-	*binary = custom_binary(num, &size);
+	int size, i, *binary;
+	binary = custom_binary(num, &size);
 
-	for (int i = 0; i < size; i++)
+	for (i = 0; i < size; i++)
 	{
 		char digit = binary[i] + '0';
 
